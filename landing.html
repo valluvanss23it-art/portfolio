@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextGen Cloud</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background: linear-gradient(120deg,#e0f7ff,#ffffff,#f0faff);
+overflow-x:hidden;
+color:#222;
+}
+
+/* Navbar */
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 10%;
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(10px);
+position:fixed;
+width:100%;
+top:0;
+z-index:1000;
+}
+
+nav h2{
+color:#0077ff;
+}
+
+nav ul{
+display:flex;
+gap:30px;
+list-style:none;
+}
+
+nav ul li a{
+text-decoration:none;
+color:#333;
+font-weight:500;
+transition:0.3s;
+}
+
+nav ul li a:hover{
+color:#0077ff;
+}
+
+/* Hamburger */
+.menu-toggle{
+display:none;
+flex-direction:column;
+cursor:pointer;
+}
+.menu-toggle span{
+height:3px;
+width:25px;
+background:#333;
+margin:4px;
+}
+
+/* Hero */
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding-top:80px;
+}
+
+.hero h1{
+font-size:3rem;
+}
+
+.hero span{
+color:#0077ff;
+}
+
+.hero p{
+margin-top:15px;
+font-size:1.2rem;
+color:#555;
+}
+
+/* Button */
+.btn{
+margin-top:20px;
+padding:12px 25px;
+background:#0077ff;
+color:#fff;
+border:none;
+border-radius:30px;
+cursor:pointer;
+transition:0.3s;
+}
+.btn:hover{
+background:#0056cc;
+}
+
+/* Section */
+section{
+padding:80px 10%;
+text-align:center;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
+margin-top:40px;
+}
+
+/* 3D Card */
+.card{
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+transition:0.4s;
+transform-style:preserve-3d;
+}
+.card:hover{
+transform:rotateY(10deg) rotateX(10deg);
+}
+
+/* Contact */
+form{
+max-width:500px;
+margin:auto;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+input,textarea{
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+outline:none;
+}
+
+.error{
+color:red;
+font-size:0.9rem;
+display:none;
+}
+
+/* Scroll animation */
+.hidden{
+opacity:0;
+transform:translateY(50px);
+transition:all 1s ease;
+}
+
+.show{
+opacity:1;
+transform:translateY(0);
+}
+
+/* Responsive */
+@media(max-width:768px){
+nav ul{
+display:none;
+flex-direction:column;
+background:#fff;
+position:absolute;
+top:70px;
+right:10%;
+padding:20px;
+}
+nav ul.active{
+display:flex;
+}
+.menu-toggle{
+display:flex;
+}
+}
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+<h2>NextGen</h2>
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="#">Services</a></li>
+<li><a href="#">About</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+<div class="menu-toggle" onclick="toggleMenu()">
+<span></span>
+<span></span>
+<span></span>
+</div>
+</nav>
+
+<div class="hero">
+<h1>I am <span id="typing"></span></h1>
+<p>Building Modern Cloud & DevOps Solutions</p>
+<button class="btn">Get Started</button>
+</div>
+
+<section class="hidden">
+<h2>Our Services</h2>
+<div class="cards">
+<div class="card">
+<h3>Cloud</h3>
+<p>AWS Infrastructure & Deployment</p>
+</div>
+<div class="card">
+<h3>DevOps</h3>
+<p>CI/CD Automation & Docker</p>
+</div>
+<div class="card">
+<h3>Security</h3>
+<p>Secure & Scalable Architecture</p>
+</div>
+</div>
+</section>
+
+<section class="hidden">
+<h2>Contact Us</h2>
+<form onsubmit="return validateForm()">
+<input type="text" id="name" placeholder="Your Name">
+<span class="error" id="nameError">Enter name</span>
+<input type="email" id="email" placeholder="Your Email">
+<span class="error" id="emailError">Enter valid email</span>
+<textarea id="message" placeholder="Message"></textarea>
+<span class="error" id="msgError">Enter message</span>
+<button class="btn" type="submit">Send Message</button>
+</form>
+</section>
+
+<script>
+
+/* Typing Effect */
+const text = ["Cloud Engineer","DevOps Engineer","Full Stack Developer"];
+let i=0,j=0,currentText="",isDeleting=false;
+
+function type(){
+currentText=text[i];
+if(!isDeleting){
+document.getElementById("typing").innerHTML=currentText.slice(0,++j);
+if(j===currentText.length){
+isDeleting=true;
+setTimeout(type,1000);
+return;
+}
+}else{
+document.getElementById("typing").innerHTML=currentText.slice(0,--j);
+if(j===0){
+isDeleting=false;
+i=(i+1)%text.length;
+}
+}
+setTimeout(type,100);
+}
+type();
+
+/* Hamburger */
+function toggleMenu(){
+document.querySelector("nav ul").classList.toggle("active");
+}
+
+/* Scroll Reveal */
+const observer=new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add("show");
+}
+});
+});
+document.querySelectorAll(".hidden").forEach(el=>{
+observer.observe(el);
+});
+
+/* Form Validation */
+function validateForm(){
+let valid=true;
+
+let name=document.getElementById("name");
+let email=document.getElementById("email");
+let message=document.getElementById("message");
+
+if(name.value===""){
+document.getElementById("nameError").style.display="block";
+valid=false;
+}else{
+document.getElementById("nameError").style.display="none";
+}
+
+if(!email.value.includes("@")){
+document.getElementById("emailError").style.display="block";
+valid=false;
+}else{
+document.getElementById("emailError").style.display="none";
+}
+
+if(message.value===""){
+document.getElementById("msgError").style.display="block";
+valid=false;
+}else{
+document.getElementById("msgError").style.display="none";
+}
+
+if(valid) alert("Form Submitted Successfully!");
+return valid;
+}
+
+/* Particle Background */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<100;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*3,
+dx:(Math.random()-0.5),
+dy:(Math.random()-0.5)
+});
+}
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fillStyle="#0077ff";
+ctx.fill();
+p.x+=p.dx;
+p.y+=p.dy;
+if(p.x<0||p.x>canvas.width) p.dx*=-1;
+if(p.y<0||p.y>canvas.height) p.dy*=-1;
+});
+requestAnimationFrame(animate);
+}
+animate();
+
+</script>
+
+</body>
+</html>
